@@ -40,11 +40,11 @@ jobs:
 
       - name: Fill empty Tag # (callout-5)
         if: ${{ github.event.inputs.version== '' }}
-        run: echo "develop" >> $TAG
+        run: echo "develop" >> ${{ env.TAG }}
 
       - name: Fill Tag
         if: ${{ github.event.inputs.version != '' }}
-        run: echo ${{ github.event.inputs.version }} >> $TAG
+        run: echo ${{ github.event.inputs.version }} >> ${{ env.TAG }}
 
       - name: Tag image # (callout-6)
         run: docker tag $(echo $IMAGE_NAME) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ github.event.inputs.version }}
