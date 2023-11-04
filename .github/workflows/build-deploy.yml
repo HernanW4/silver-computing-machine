@@ -37,16 +37,15 @@ jobs:
       - name: Log in to DO Container Registry # (callout-4)
         run: doctl registry login --expiry-seconds 600
 
-      - name: Check Tag
-        run: |
-          if: ${{ github.event.inputs.version }} 
+      - name: Fill Tag
+        run: echo ${{ github.event.inputs.version }} >> $TAG
 
-      - name: Tag image # (callout-5)
-        run: |
-          echo ${{ github.event.inputs.version }} >> $TAG
-          if: $(echo $TAG) == ''
-          echo "develop" >> $TAG
-          docker tag $(echo $IMAGE_NAME) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ github.event.inputs.version }}
+      - name: Fill empty Tag # (callout-5)
+        if: $(echo $TAG) == ''
+        run: echo "develop" >> $TAG
+
+      - name: Tag image# (callout-6)
+        run: docker tag $(echo $IMAGE_NAME) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ github.event.inputs.version }}
 
       - name: Push image to DO Container Registry # (callout-6)
         run: docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ github.event.inputs.version }}
