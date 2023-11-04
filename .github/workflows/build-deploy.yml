@@ -39,12 +39,11 @@ jobs:
         run: | 
           doctl registry login --expiry-seconds 600
           # docker images
-          docker login --username ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           docker tag $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) 
       
       - name: Push image to DigitalOcean
         run: |
-          docker push $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+          docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) 
         
             #  deploy:
             #    runs-on: ubuntu-latest
