@@ -1,8 +1,6 @@
 name: CI/CD build and publish
 
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
     inputs:
       version:
