@@ -15,6 +15,7 @@ on:
 env: 
   REGISTRY: "personal-registryhw4"
   IMAGE_NAME: "python_websitev1"
+  TAG: ""
 
 # stages
 jobs:
@@ -41,7 +42,7 @@ jobs:
         run: echo ${{ github.event.inputs.version }} >> $TAG
 
       - name: Fill empty Tag # (callout-5)
-        if: echo $TAG == ''
+        if: ${{ env.TAG== '' }}
         run: echo "develop" >> $TAG
 
       - name: Tag image# (callout-6)
