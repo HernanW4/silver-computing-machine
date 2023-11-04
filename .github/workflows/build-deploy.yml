@@ -38,6 +38,7 @@ jobs:
       - name: Log in to DigitalOcean Container Registry (short-lived)
         run: | 
           doctl registry login --expiry-seconds 600
+          docker images
           docker tag $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) 
       
       - name: Remove all old images
