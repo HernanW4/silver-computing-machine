@@ -16,7 +16,7 @@ on:
 #2
 env:
   REGISTRY: "personal-registryhw4"
-  IMAGE_NAME: "python_website"
+  IMAGE_NAME: "python_websitev2"
 
 #3
 jobs:
