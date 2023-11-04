@@ -36,7 +36,7 @@ jobs:
 
       - name: Tag image # (callout-5)
         run:
-          docker tag $(echo $IMAGE_NAME) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
+          docker tag $(echo $IMAGE_NAME) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ github.event.input.version }}
 
       - name: Push image to DO Container Registry # (callout-6)
-        run: docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
+        run: docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ github.event.input.version }}
