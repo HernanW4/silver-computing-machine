@@ -42,12 +42,12 @@ jobs:
         if: ${{ github.event.inputs.version== '' }}
         run: echo "develop">>$env:TAG
 
-      - name: Fill Tag
+      - name: Fill Tag # (callout-6)
         if: ${{ github.event.inputs.version != '' }}
         run: echo ${{ github.event.inputs.version }}>>$env:TAG
 
-      - name: Tag image # (callout-6)
-        run: docker tag $(echo $IMAGE_NAME) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ github.event.inputs.version }}
+      - name: Tag image # (callout-7)
+        run: docker tag $(echo $IMAGE_NAME) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
 
-      - name: Push image to DO Container Registry # (callout-7)
-        run: docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ github.event.inputs.version }}
+      - name: Push image to DO Container Registry # (callout-8)
+        run: docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
