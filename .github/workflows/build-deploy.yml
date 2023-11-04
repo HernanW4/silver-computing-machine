@@ -1,75 +1,42 @@
-name: CI/CD Pipeline
+name: CI/CD build and publish
 
-# 1
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push events but only for the master branch
   push:
-    branches: [ master ]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches: [master]
   workflow_dispatch:
     inputs:
       version:
         description: 'Image version'
         required: true
-#2
-env:
-  REGISTRY: "personal-registryhw4"
-  IMAGE_NAME: "python_websitev2"
 
-#3
+# Environment variable
+env: 
+  REGISTRY: "personal-registryhw4"
+  IMAGE_NAME: "python_websitev1"
+  TAG: ${{ github.event.input.version }}
+
+# stages
 jobs:
-  build_and_push:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repo 
+      - name: Checkout the repo # (callout-1)
         uses: actions/checkout@v3
-        
-      - name: Build container image
-        run: |
-          docker build -t $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
 
-      - name: Install doctl
+      - name: Build image # (callout-2)
+        run: docker build -t $(echo $IMAGE_NAME) .
+
+      - name: Install doctl # (callout-3)
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-    
-      - name: Log in to DigitalOcean Container Registry (short-lived)
-        run: | 
-          doctl registry login --expiry-seconds 600
-          # docker images
-          docker tag $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) 
-      
-      - name: Push image to DigitalOcean
-        run: |
-          ls -la
-          docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) 
-        
-            #  deploy:
-            #    runs-on: ubuntu-latest
-            #    needs: build_and_push
-            #    environment: master
-            #    
-            #    steps:
-            #      - name: Deploy to Digital Ocean droplet via SSH action
-            #        uses: appleboy/ssh-action@v0.1.4
-            #        with:
-            #          HOST: ${{ secrets.HOST }}
-            #          USERNAME: ${{ secrets.USERNAME }}
-            #          KEY: ${{ secrets.SSH_KEY }}
-            #          PASSPHRASE: ${{ secrets.PASSPHRASE }}
-            #          ENVS: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
-            #          script: |
-            #            # Login to registry
-            #            sudo docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
-            #            # Stop running container
-            #            sudo docker stop $(echo $IMAGE_NAME)
-            #            # Remove old container
-            #            sudo docker rm $(echo $IMAGE_NAME)
-            #            # Run a new container from a new image
-            #            sudo docker run -d \
-            #            --restart always \
-            #            --name $(echo $IMAGE_NAME) \
-            #            $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
-            #
+
+      - name: Log in to DO Container Registry # (callout-4)
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Tag image # (callout-5)
+        run:
+          docker tag $(echo $IMAGE_NAME) registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
+
+      - name: Push image to DO Container Registry # (callout-6)
+        run: docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $TAG)
