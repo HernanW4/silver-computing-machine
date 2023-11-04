@@ -1,11 +1,15 @@
 name: CI/CD build and publish
 
 on:
+  push:
+    branches: [develop]
+
   workflow_dispatch:
     inputs:
       version:
         description: 'Image version'
         required: true
+        default: $(echo $GITHUB_SHA | head -c7)
 
 # Environment variable
 env: 
