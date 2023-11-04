@@ -36,7 +36,7 @@ jobs:
     
       - name: Log in to DigitalOcean Container Registry (short-lived)
         run: doctl registry login --expiry-seconds 600
-      
+      do
       - name: Remove all old images
         run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
 
@@ -64,6 +64,8 @@ jobs:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
           ENVS: IMAGE_NAME,REGISTRY,{{ secrets.DIGITALOCEAN_ACCESS_TOKEN }},GITHUB_SHA
           script: |
+            # Login to doctl 
+            doctl registry login -t ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} --expiry-seconds 600
             # Login to registry
             sudo docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
             # Stop running container
