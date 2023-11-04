@@ -41,7 +41,7 @@ jobs:
         run: echo ${{ github.event.inputs.version }} >> $TAG
 
       - name: Fill empty Tag # (callout-5)
-        if: $(echo $TAG) == ''
+        if: echo $TAG == ''
         run: echo "develop" >> $TAG
 
       - name: Tag image# (callout-6)
