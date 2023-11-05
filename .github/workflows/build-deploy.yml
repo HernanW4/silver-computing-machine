@@ -12,41 +12,42 @@ on:
         description: 'Image version'
         required: true
 
-# Environment variable
 env: 
   REGISTRY: "personal-registryhw4"
   IMAGE_NAME: "python_websitev1"
 
-# stages
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the repo # (callout-1)
+      - name: Checkout the repo
         uses: actions/checkout@v3
 
-      - name: Build app into Docker image # (callout-2)
+      - name: Build app into Docker image
         run: |
-          docker build -t $(echo $IMAGE_NAME) .
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
 
-      - name: Install doctl # (callout-3)
+      - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-            
+
       - name: Extract branch name
         shell: bash
-        run:  echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')" >> $GITHUB_ENV
+        run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//-/g')" >> $GITHUB_ENV
 
       - name: Setup TAG
         shell: bash
         run: |
-           $(echo $IMAGE_NAME):${{ github.sha }}
-           ${{ github.ref == 'refs/heads/master' && $(echo $IMAGE_NAME):'latest' || format($(echo $IMAGE_NAME):'{0}', env.BRANCH_NAME) }}
+          if [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+            echo "TAG=latest" >> $GITHUB_ENV
+          else
+            echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          fi
 
-
-      - name: Log in to DO Container Registry # (callout-4)
+      - name: Log in to DO Container Registry
         run: doctl registry login --expiry-seconds 600
 
-      - name: Push image to DO Container Registry # (callout-6)
-        run: docker push registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):env.BRANCH_NAME
+      - name: Push image to DO Container Registry
+        run: docker push registry.digitalocean.com/${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+
