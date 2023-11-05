@@ -29,12 +29,15 @@ jobs:
           if [ "${{ github.ref }}" = "refs/heads/develop" ]; then
             echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
           else
-          echo "TAG=latest" >> $GITHUB_ENV
+            echo "TAG=latest" >> $GITHUB_ENV
           fi
 
       - name: Build app into Docker image
         run: |
           docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG}} .
+
+      - name: Tag image
+        run: docker tag  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG}} registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ env.TAG }}
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
