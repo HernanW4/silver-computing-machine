@@ -33,11 +33,10 @@ jobs:
           fi
 
       - name: Build app into Docker image
-        run: |
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG}} .
+        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG}} .
 
       - name: Tag image
-        run: docker tag  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG}} registry.digitalocean.com/$(echo $REGISTRY)/$(echo $IMAGE_NAME):${{ env.TAG }}
+        run: docker tag  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG}} registry.digitalocean.com/${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -46,6 +45,10 @@ jobs:
 
       - name: Log in to DO Container Registry
         run: doctl registry login --expiry-seconds 600
+
+      - name: Remove all old images
+        run: if [ ! -z "$(doctl registry repository list | grep "${{ env.IMAGE_NAME }}")" ]; then doctl registry repository delete-manifest ${{ env.IMAGE_NAME }}$(doctl registry repository list-tags ${{ env.IMAGE_NAME }} | grep -o "sha.*") --force; else echo "No repository"; fi
+
 
       - name: Push image to DO Container Registry
         run: docker push registry.digitalocean.com/${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
