@@ -53,9 +53,9 @@ jobs:
           OLD_TAGS=$(doctl registry repository list-tags $IMAGE --format Tag --no-header | grep -v -E "(latest|$TAG)")
 
           # Loop over the tags and delete them
-          for TAG in $OLD_TAGS; do
+          for TO_DELETE in $OLD_TAGS; do
             echo "Deleting tag $TAG"
-            doctl registry repository delete-tag $IMAGE $TAG --force
+            doctl registry repository delete-tag $IMAGE $TO_DELETE --force
           done
 
 
