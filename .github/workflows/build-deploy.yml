@@ -48,6 +48,7 @@ jobs:
 
       - name: Delete old tags from DO Container Registry
         shell: bash
+        id: loop
         run: |
           # Get all image tags except 'latest' and the one we want to keep
           OLD_TAGS=$(doctl registry repository list-tags ${{ env.IMAGE_NAME }} --format Tag | grep -v -E "(latest|${{ env.TAG }})")
