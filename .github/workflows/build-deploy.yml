@@ -51,10 +51,10 @@ jobs:
         id: loop
         run: |
           # Get all image tags except 'latest' and the one we want to keep
-          OLD_TAGS=$(doctl registry repository list-tags ${{ env.IMAGE_NAME }} --format Tag | grep -v -E "(latest|${{ env.TAG }})")
+          echo "OLD_TAGS=$(doctl registry repository list-tags ${{ env.IMAGE_NAME }} --format Tag | grep -v -E "(latest|${{ env.TAG }})")" >> $GITHUB_ENV 
 
           # Loop over the tags and delete them
-          for tags in $OLD_TAGS; do
+          for tags in ${{ env.OLD_TAGS }}; do
             echo "Deleting tag $tags"
             doctl registry repository delete-tag $tags --force
           done
