@@ -53,9 +53,9 @@ jobs:
           OLD_TAGS=$(doctl registry repository list-tags ${{ env.IMAGE_NAME }} --format Tag | grep -v -E "(latest|${{ env.TAG }})")
 
           # Loop over the tags and delete them
-          for TO_DELETE in $OLD_TAGS; do
-            echo "Deleting tag ${{ env. TAG }}"
-            doctl registry repository delete-tag $TO_DELETE --force
+          for tags in $OLD_TAGS; do
+            echo "Deleting tag $tags"
+            doctl registry repository delete-tag $tags --force
           done
 
 
