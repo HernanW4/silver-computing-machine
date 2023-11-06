@@ -46,8 +46,20 @@ jobs:
       - name: Log in to DO Container Registry
         run: doctl registry login --expiry-seconds 600
 
-      - name: Remove all old images
-        run: if [ ! -z "$(doctl registry repository list | grep "${{ env.IMAGE_NAME }}")" ]; then doctl registry repository delete-manifest ${{ env.IMAGE_NAME }}$(doctl registry repository list-tags ${{ env.IMAGE_NAME }} | grep -o "sha.*") --force; else echo "No repository"; fi
+      - name: Delete old tags from DO Container Registry
+        shell: bash
+        env:
+          KEEP_TAG: ${{ env.TAG }} # Tag from the current workflow run
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        run: |
+          # Get all image tags except 'latest' and the one we want to keep
+          OLD_TAGS=$(doctl registry repository list-tags $IMAGE --format Tag --no-header | grep -v -E "(latest|$KEEP_TAG)")
+
+          # Loop over the tags and delete them
+          for TAG in $OLD_TAGS; do
+            echo "Deleting tag $TAG"
+            doctl registry repository delete-tag $IMAGE $TAG --force
+          done
 
 
       - name: Push image to DO Container Registry
