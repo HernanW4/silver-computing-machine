@@ -48,17 +48,14 @@ jobs:
 
       - name: Delete old tags from DO Container Registry
         shell: bash
-        env:
-          KEEP_TAG: ${{ env.TAG }} # Tag from the current workflow run
-          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         run: |
           # Get all image tags except 'latest' and the one we want to keep
-          OLD_TAGS=$(doctl registry repository list-tags $IMAGE --format Tag --no-header | grep -v -E "(latest|$KEEP_TAG)")
+          OLD_TAGS=$(doctl registry repository list-tags $REGISTRY --format Tag --no-header | grep -v -E "(latest|$TAG)")
 
           # Loop over the tags and delete them
           for TAG in $OLD_TAGS; do
             echo "Deleting tag $TAG"
-            doctl registry repository delete-tag $IMAGE $TAG --force
+            doctl registry repository delete-tag $REGISTRY $TAG --force
           done
 
 
