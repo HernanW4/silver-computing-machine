@@ -55,7 +55,7 @@ jobs:
           # Loop over the tags and delete them
           for TO_DELETE in $OLD_TAGS; do
             echo "Deleting tag ${{ env. TAG }}"
-            doctl registry repository delete-tag ${{ env.TAG}} $TO_DELETE --force
+            doctl registry repository delete-tag $TO_DELETE --force
           done
 
 
