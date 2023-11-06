@@ -50,7 +50,7 @@ jobs:
         shell: bash
         run: |
           # Get all image tags except 'latest' and the one we want to keep
-          OLD_TAGS=$(doctl registry repository list-tags ${{ env.TAG }} --format Tag | grep -v -E "(latest|${{ env.TAG }})")
+          OLD_TAGS=$(doctl registry repository list-tags ${{ env.IMAGE }} --format Tag | grep -v -E "(latest|${{ env.TAG }})")
 
           # Loop over the tags and delete them
           for TO_DELETE in $OLD_TAGS; do
