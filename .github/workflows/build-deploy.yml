@@ -51,8 +51,8 @@ jobs:
 
       - name: Remove all old images
         run: if [ ! -z $(doctl registry repository list-tags $IMAGE_NAME --format Tag)  ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -v -E "(latest)") --force; else echo "No repository"; fi
-        
 
       - name: Push image to DO Container Registry
         run: docker push registry.digitalocean.com/${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+
 
