@@ -1,8 +1,6 @@
 name: build_push_docker
 
 on:
-  merge:
-    branches: master
   push: 
     branches:
       - develop
