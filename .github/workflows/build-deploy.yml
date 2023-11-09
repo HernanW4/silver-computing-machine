@@ -29,10 +29,8 @@ jobs:
         run: |
           if [ "${{ github.ref }}" = "refs/heads/develop" ]; then
             echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
-          elif [ "${{ github.ref }}" = "refs/heads/master" ]; then
-            echo "TAG=latest" >> $GITHUB_ENV
           else
-            echo "TAG=${{ github.event.inputs.version}}" >> $GITHUB_ENV
+            echo "TAG=latest" >> $GITHUB_ENV
           fi
 
       - name: Build app into Docker image
