@@ -1,7 +1,7 @@
 name: build_push_docker
 
 on:
-  pull_request:
+  merge:
     branches: master
   push: 
     branches:
@@ -18,7 +18,7 @@ env:
   IMAGE_NAME: "python_websitev1"
 
 jobs:
-  build:
+  build_push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repo
