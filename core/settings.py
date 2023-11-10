@@ -31,7 +31,7 @@ if not SECRET_KEY:
 DEBUG = 'RENDER' not in os.environ
 
 # HOSTs List
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'orca-app-nqin8.ondigitalocean.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '*']
 
 # Add here your deployment HOSTS
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://localhost:5085', 'http://127.0.0.1:8000', 'http://127.0.0.1:5085', 'http://0.0.0.0:8080']
