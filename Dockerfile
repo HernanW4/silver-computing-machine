@@ -11,10 +11,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# running migrations
-RUN python manage.py migrate
-
 EXPOSE 8080
+
+# Copy entrypoint script and make it executable
+COPY entrypoint.sh /usr/src/app/entrypoint.sh
+RUN chmod +x /usr/src/app/entrypoint.sh
+
+# Set the entrypoint script to be executed
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+
 
 # gunicorn
 CMD ["gunicorn", "--config", "gunicorn-cfg.py", "core.wsgi"]
