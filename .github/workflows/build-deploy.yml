@@ -33,6 +33,12 @@ jobs:
 
       - name: Build app into Docker image
         run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG}} .
+        env:
+          DB_USERNAME: ${{ env.DB_USERNAME}}
+          DB_PASS: ${{ env.DB_PASS}}
+          DB_HOST: ${{ env.DB_HOST}}
+          DB_PORT: ${{ env.DB_PORT}}
+          DB_NAME: ${{ env.DB_NAME}}
 
       - name: Tag image
         run: docker tag  ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG}} registry.digitalocean.com/${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
