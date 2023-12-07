@@ -98,8 +98,7 @@ DB_HOST     = os.getenv('DB_HOST'     , None)
 DB_PORT     = os.getenv('DB_PORT'     , None)
 DB_NAME     = os.getenv('DB_NAME'     , None)
 
-if DB_ENGINE and DB_NAME and DB_USERNAME:
-    DATABASES = { 
+DATABASES = { 
       'default': {
         'ENGINE'  : 'django.db.backends.postgresql', 
         'NAME'    : DB_NAME,
